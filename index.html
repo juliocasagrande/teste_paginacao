@@ -3,96 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paginação Exemplo</title>
+    <title>Gráficos com Navegação por Abas</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .pagination {
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            padding: 20px;
+            max-width: 100%;
+        }
+        .tabs {
             display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        .page-item {
-            margin: 0 5px;
             cursor: pointer;
+            margin-bottom: 20px;
         }
-        .page-item.active {
+        .tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            background-color: #f2f2f2;
+            border: 1px solid #ddd;
+        }
+        .tab.active {
+            background-color: #ddd;
             font-weight: bold;
         }
-        .content {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+        .tab-content {
+            display: none;
         }
-        .item {
-            width: 200px;
-            margin: 10px;
-            padding: 20px;
-            border: 1px solid #ddd;
-            text-align: center;
+        .tab-content.active {
+            display: block;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            width: 800px; /* Define a largura do gráfico */
+            height: 400px; /* Define a altura do gráfico */
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h3 id="titulo">Paginação Exemplo</h3>
-        <div id="content" class="content">
-            <!-- Os itens serão inseridos aqui dinamicamente -->
+        <div class="tabs">
+            <div class="tab active" data-tab="line-chart">Gráfico de Linha</div>
+            <div class="tab" data-tab="radar-chart">Gráfico Radar</div>
         </div>
-        <div id="pagination" class="pagination">
-            <!-- Os controles de paginação serão inseridos aqui dinamicamente -->
+        <div id="line-chart" class="tab-content active">
+            <canvas id="lineChartCanvas"></canvas>
+        </div>
+        <div id="radar-chart" class="tab-content">
+            <canvas id="radarChartCanvas"></canvas>
         </div>
     </div>
 
     <script>
-        const itemsPerPage = 5;
-        let currentPage = 1;
-        const items = [
-            "Item 1", "Item 2", "Item 3", "Item 4", "Item 5",
-            "Item 6", "Item 7", "Item 8", "Item 9", "Item 10",
-            "Item 11", "Item 12", "Item 13", "Item 14", "Item 15",
-            "Item 16", "Item 17", "Item 18", "Item 19", "Item 20"
-        ];
-
-        function displayItems() {
-            const content = document.getElementById('content');
-            content.innerHTML = '';
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            const paginatedItems = items.slice(start, end);
-
-            paginatedItems.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'item';
-                div.textContent = item;
-                content.appendChild(div);
+        // Função para alternar entre as abas
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.getAttribute('data-tab')).classList.add('active');
             });
-        }
+        });
 
-        function displayPagination() {
-            const pagination = document.getElementById('pagination');
-            pagination.innerHTML = '';
-            const pageCount = Math.ceil(items.length / itemsPerPage);
+        // Dados para o gráfico de linha
+        const lineChartData = {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            datasets: [{
+                label: 'My First dataset',
+                backgroundColor: 'rgba(75,192,192,0.2)',
+                borderColor: 'rgba(75,192,192,1)',
+                data: [65, 59, 80, 81, 56, 55, 40]
+            }]
+        };
 
-            for (let i = 1; i <= pageCount; i++) {
-                const pageItem = document.createElement('span');
-                pageItem.className = 'page-item';
-                pageItem.textContent = i;
-                pageItem.onclick = () => {
-                    currentPage = i;
-                    update();
-                };
-                if (i === currentPage) {
-                    pageItem.classList.add('active');
+        // Configuração do gráfico de linha
+        const lineChartConfig = {
+            type: 'line',
+            data: lineChartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Gráfico de Linha'
+                    }
                 }
-                pagination.appendChild(pageItem);
             }
-        }
+        };
 
-        function update() {
-            displayItems();
-            displayPagination();
-        }
+        // Renderizar o gráfico de linha
+        const lineChartCtx = document.getElementById('lineChartCanvas').getContext('2d');
+        new Chart(lineChartCtx, lineChartConfig);
 
-        window.onload = update;
+        // Dados para o gráfico radar
+        const radarChartData = {
+            labels: ['Running', 'Swimming', 'Eating', 'Cycling', 'Sleeping', 'Working', 'Coding'],
+            datasets: [{
+                label: 'My First dataset',
+                backgroundColor: 'rgba(255,99,132,0.2)',
+                borderColor: 'rgba(255,99,132,1)',
+                pointBackgroundColor: 'rgba(255,99,132,1)',
+                data: [20, 10, 4, 2, 10, 5, 9]
+            }]
+        };
+
+        // Configuração do gráfico radar
+        const radarChartConfig = {
+            type: 'radar',
+            data: radarChartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Gráfico Radar'
+                    }
+                }
+            }
+        };
+
+        // Renderizar o gráfico radar
+        const radarChartCtx = document.getElementById('radarChartCanvas').getContext('2d');
+        new Chart(radarChartCtx, radarChartConfig);
     </script>
 </body>
 </html>
