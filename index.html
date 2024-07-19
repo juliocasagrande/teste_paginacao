@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paginação Exemplo</title>
+    <style>
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .page-item {
+            margin: 0 5px;
+            cursor: pointer;
+        }
+        .page-item.active {
+            font-weight: bold;
+        }
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .item {
+            width: 200px;
+            margin: 10px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3 id="titulo">Paginação Exemplo</h3>
+        <div id="content" class="content">
+            <!-- Os itens serão inseridos aqui dinamicamente -->
+        </div>
+        <div id="pagination" class="pagination">
+            <!-- Os controles de paginação serão inseridos aqui dinamicamente -->
+        </div>
+    </div>
+
+    <script>
+        const itemsPerPage = 5;
+        let currentPage = 1;
+        const items = [
+            "Item 1", "Item 2", "Item 3", "Item 4", "Item 5",
+            "Item 6", "Item 7", "Item 8", "Item 9", "Item 10",
+            "Item 11", "Item 12", "Item 13", "Item 14", "Item 15",
+            "Item 16", "Item 17", "Item 18", "Item 19", "Item 20"
+        ];
+
+        function displayItems() {
+            const content = document.getElementById('content');
+            content.innerHTML = '';
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const paginatedItems = items.slice(start, end);
+
+            paginatedItems.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'item';
+                div.textContent = item;
+                content.appendChild(div);
+            });
+        }
+
+        function displayPagination() {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+            const pageCount = Math.ceil(items.length / itemsPerPage);
+
+            for (let i = 1; i <= pageCount; i++) {
+                const pageItem = document.createElement('span');
+                pageItem.className = 'page-item';
+                pageItem.textContent = i;
+                pageItem.onclick = () => {
+                    currentPage = i;
+                    update();
+                };
+                if (i === currentPage) {
+                    pageItem.classList.add('active');
+                }
+                pagination.appendChild(pageItem);
+            }
+        }
+
+        function update() {
+            displayItems();
+            displayPagination();
+        }
+
+        window.onload = update;
+    </script>
+</body>
+</html>
